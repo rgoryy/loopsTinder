@@ -6,7 +6,6 @@ import com.example.clothestinder.service.UserService;
 import com.example.clothestinder.utils.MessageUtils;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -25,7 +24,7 @@ public class UpdateController {
     public UpdateController(UserService userService, MessageUtils messageUtils) {
         this.userService = userService; //Todo
         this.messageUtils = messageUtils;
-        this.stateMap = new HashMap<Long, Integer>();
+        this.stateMap = new HashMap<>();
     }
 
     public void registerBot(MyTelegramBot telegramBot){
@@ -102,11 +101,13 @@ public class UpdateController {
     private void processTextMessage(Update update) {
         if(update.getMessage().getText().equals("/start")){
             var sendMessage = messageUtils.generateSendMessageWithText(update,
-                    "Привет! Я бот clothesTinder, я что-то умею");
+                    "Привет! Я бот clothesTinder, я что-то умею \n" +
+                            "Зарегестрируйтесь, чтобы начать работу с ботом clothesTinder \n" +
+                            "Введите логин и пароль для регистрации через пробел");
             setView(sendMessage);
         }
 
-        setView(messageUtils.generateSendMessageWithText(update,
-                "Отправленo текстовое сообщение"));
+//        setView(messageUtils.generateSendMessageWithText(update,
+//                "Отправленo текстовое сообщение"));
     }
 }

@@ -15,7 +15,6 @@ import javax.annotation.PostConstruct;
 public class MyTelegramBot extends TelegramLongPollingBot {
     @Value("${bot.name}") private String botName;
     @Value("${bot.token}") private String token;
-   // private static final Logger log = Logger.getLogger(MyTelegramBot.class);
     private UpdateController updateController;
 
     public MyTelegramBot(UpdateController updateController){
