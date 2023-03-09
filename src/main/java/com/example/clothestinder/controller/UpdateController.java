@@ -1,6 +1,8 @@
 package com.example.clothestinder.controller;
 
-import com.example.clothestinder.service.MainService;
+
+import com.example.clothestinder.entity.User;
+import com.example.clothestinder.service.UserService;
 import com.example.clothestinder.utils.MessageUtils;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
@@ -8,16 +10,22 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+
+import java.util.HashMap;
+import java.util.Optional;
+
 @Component
 @Log4j
 public class UpdateController {
-    private final MainService mainService; //todo
+    private final UserService userService; //todo
     private MyTelegramBot myTelegramBot;
     private MessageUtils messageUtils;
+    private HashMap<Long, Integer> stateMap;
 
-    public UpdateController(MainService mainService, MessageUtils messageUtils) {
-        this.mainService = mainService; //Todo
+    public UpdateController(UserService userService, MessageUtils messageUtils) {
+        this.userService = userService; //Todo
         this.messageUtils = messageUtils;
+        this.stateMap = new HashMap<Long, Integer>();
     }
 
     public void registerBot(MyTelegramBot telegramBot){
@@ -25,29 +33,50 @@ public class UpdateController {
     }
 
     public void processUpdate(Update update){
-        if(update == null) {
-            log.error("Received update is null");
-        }
+        var message = update.getMessage();
+        Long userId = message.getFrom().getId();
 
-        if(update.getMessage() != null) {
-            distributeMessagesByType(update);
-        } else {
-            log.error("Received unsupported message type" + update);
+        if (!stateMap.containsKey(userId)) {
+            stateMap.put(userId, 0);
+        }
+        Optional<User> user =  userService.getUserByTelegramId(userId);
+        if (stateMap.get(userId) == 0) {
+            if (user.isEmpty()) {
+                userService.addNewUser(userId);
+                setView(messageUtils.generateSendMessageWithText(update,
+                        "send login"));
+                stateMap.replace(userId, 1);
+            } else {
+                setView(messageUtils.generateSendMessageWithText(update,
+                        "Hello, " + user.get().getLogin()));
+            }
+        } else if (stateMap.get(userId) == 1) {
+            String login = message.getText();
+            userService.setLogin(userId, login);
+            setView(messageUtils.generateSendMessageWithText(update,
+                    "send password"));
+            stateMap.replace(userId, 2);
+        } else if(stateMap.get(userId) == 2) {
+            String password = message.getText();
+            userService.setPassword(userId, password);
+            setView(messageUtils.generateSendMessageWithText(update,
+                    "succesfully registered"));
+            stateMap.replace(userId, 0);
         }
     }
 
     public void distributeMessagesByType(Update update){
-        var message = update.getMessage();
-        if(message.getText() != null) {
-            processTextMessage(update);
-            mainService.processTextMessage(update);
-        } else if (message.getDocument() != null ) {
-            processDocMessage(update);
-        } else if (message.getPhoto() != null) {
-            processPhotoMessage(update);   
-        } else {
-            setUnsupportedMessageTypeView(update);
-        }
+//        var message = update.getMessage();
+//        if(message.getText() != null) {
+//            processTextMessage(update);
+//            mainService.processTextMessage(update);
+//        } else if (message.getDocument() != null ) {
+//            processDocMessage(update);
+//        } else if (message.getPhoto() != null) {
+//            processPhotoMessage(update);
+//        } else {
+//            setUnsupportedMessageTypeView(update);
+//        }
     }
 
     private void setUnsupportedMessageTypeView(Update update) {
