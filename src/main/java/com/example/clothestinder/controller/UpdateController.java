@@ -9,6 +9,7 @@ import com.example.clothestinder.utils.MessageUtils;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Audio;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 
@@ -38,7 +39,6 @@ public class UpdateController {
     public void processUpdate(Update update){
         var message = update.getMessage();
         Long userId = message.getFrom().getId();
-
         if (!stateMap.containsKey(userId)) {
             stateMap.put(userId, 0);
         }
@@ -70,6 +70,7 @@ public class UpdateController {
             stateMap.replace(userId, 0);
         }
     }
+
 
     private void processAddTag(Update update, String message){
         Optional<Tag> tag = tagService.getTagByName(message);

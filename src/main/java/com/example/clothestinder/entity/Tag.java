@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Data
 @Builder
@@ -19,4 +20,10 @@ public class Tag {
     private Long id;
     @Column(name = "tag_itself")
     private String tagItself;
+
+    @ManyToMany(mappedBy = "tags")
+    Set<Request> requests;
+
+    @ManyToMany(mappedBy = "tags")
+    Set<Request> loops;
 }

@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
+import java.util.Set;
 
 /*@Getter
 @Setter
@@ -27,4 +28,12 @@ public class User {
     private String password;
     @Column(name = "telegram_id")
     private Long telegramId;
+
+    @OneToMany
+    @JoinColumn(name = "user_id")
+    private Set<Request> requests;
+
+    @OneToMany
+    @JoinColumn(name = "user_id")
+    private Set<Loop> loops;
 }

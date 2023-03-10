@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 import java.util.Set;
 
 @Data
@@ -16,32 +15,31 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "request")
-public class Request {
+@Table(name = "loop")
+public class Loop {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column
-    private Long userId;
+    private Long userID;
     @Column
-    private Timestamp creationDate;//todo v3
-    @Column
-    private Long bpmMin;
-    @Column
-    private Long bpmMax;
+    private String filePath; //todo
     @Column
     @Enumerated(EnumType.STRING)
     private Tonality tonality; //todo
+    @Column
+    private Long bpm;
 
     @ManyToOne
     @JoinColumn(name = "user_id", insertable = false, updatable = false)
-    private User user;
+    private Loop loop;
 
     @ManyToMany
     @JoinTable(
-            name = "request_tags",
-            joinColumns = { @JoinColumn(name = "request_id")},
+            name = "loop_tags",
+            joinColumns = { @JoinColumn(name = "loop_id")},
             inverseJoinColumns = { @JoinColumn(name = "tag_id")}
     )
-    Set<Tag> tags;
+    private Set<Loop> loops;
+
 }
