@@ -1,7 +1,9 @@
 package com.example.clothestinder.controller;
 
 
+import com.example.clothestinder.entity.Tag;
 import com.example.clothestinder.entity.User;
+import com.example.clothestinder.service.TagService;
 import com.example.clothestinder.service.UserService;
 import com.example.clothestinder.utils.MessageUtils;
 import lombok.extern.log4j.Log4j;
@@ -17,12 +19,14 @@ import java.util.Optional;
 @Log4j
 public class UpdateController {
     private final UserService userService; //todo
+    private final TagService tagService; //todo
     private MyTelegramBot myTelegramBot;
     private MessageUtils messageUtils;
     private HashMap<Long, Integer> stateMap;
 
-    public UpdateController(UserService userService, MessageUtils messageUtils) {
+    public UpdateController(UserService userService, TagService tagService, MessageUtils messageUtils) {
         this.userService = userService; //Todo
+        this.tagService = tagService; //todo
         this.messageUtils = messageUtils;
         this.stateMap = new HashMap<>();
     }
@@ -48,6 +52,9 @@ public class UpdateController {
             } else {
                 setView(messageUtils.generateSendMessageWithText(update,
                         "Hello, " + user.get().getLogin()));
+                if(message.getText().startsWith("#")){
+                    processAddTag(update, message.getText());
+                }
             }
         } else if (stateMap.get(userId) == 1) {
             String login = message.getText();
@@ -59,8 +66,21 @@ public class UpdateController {
             String password = message.getText();
             userService.setPassword(userId, password);
             setView(messageUtils.generateSendMessageWithText(update,
-                    "succesfully registered"));
+                    "successfully registered"));
             stateMap.replace(userId, 0);
+        }
+    }
+
+    private void processAddTag(Update update, String message){
+        Optional<Tag> tag = tagService.getTagByName(message);
+        if(tag.isEmpty()) {
+            String tagToAdd = update.getMessage().getText();
+            tagService.addNewTag(tagToAdd);
+            setView(messageUtils.generateSendMessageWithText(update,
+                    "added tag"));
+        } else {
+            setView(messageUtils.generateSendMessageWithText(update,
+                    "tag " + message + " already exists"));
         }
     }
 
