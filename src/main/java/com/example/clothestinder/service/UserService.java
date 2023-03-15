@@ -16,7 +16,7 @@ public class UserService {
         this.userDAO = userDAO;
     }
 
-    public void addNewUser (long telegramId) {
+    public void addNewUser(long telegramId) {
         User user = new User();
         user.setTelegramId(telegramId);
         user.setLogin(""); //TODO fix this
@@ -33,13 +33,14 @@ public class UserService {
             return Optional.of(user);
         }
     }
-    public void setLogin (Long telegramId, String login) {
+
+    public void setLogin(Long telegramId, String login) {
         User user = userDAO.getUserByTelegramId(telegramId);
         user.setLogin(login);
         userDAO.save(user);
     }
 
-    public void setPassword (Long telegramId, String password) {
+    public void setPassword(Long telegramId, String password) {
         User user = userDAO.getUserByTelegramId(telegramId);
         user.setPassword(password);
         userDAO.save(user);

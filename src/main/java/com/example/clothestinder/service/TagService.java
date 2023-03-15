@@ -16,7 +16,7 @@ public class TagService {
         this.tagDAO = tagDAO;
     }
 
-    public Optional<Tag> getTagByName(String tagByItself){
+    public Optional<Tag> getTagByName(String tagByItself) {
         Tag tag = tagDAO.getTagByTagItself(tagByItself);
         if (tag == null) {
             return Optional.empty();
@@ -25,7 +25,7 @@ public class TagService {
         }
     }
 
-    public void addNewTag (String tagToAdd){
+    public void addNewTag(String tagToAdd) {
         Tag tag = new Tag();
         tag.setTagItself(tagToAdd);
         tagDAO.save(tag);

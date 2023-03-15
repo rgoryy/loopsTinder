@@ -6,9 +6,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Data
@@ -21,17 +22,18 @@ public class Request {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column
+    @Column(name = "user_id")
     private Long userId;
-    @Column
-    private Timestamp creationDate;//todo v3
-    @Column
+    @CreationTimestamp
+    @Column(name = "creation_date")
+    private LocalDateTime creationDateTime;
+    @Column(name = "bpm_min")
     private Long bpmMin;
-    @Column
+    @Column(name = "bpm_max")
     private Long bpmMax;
-    @Column
+    @Column(name = "tonality")
     @Enumerated(EnumType.STRING)
-    private Tonality tonality; //todo
+    private Tonality tonality;
 
     @ManyToOne
     @JoinColumn(name = "user_id", insertable = false, updatable = false)
@@ -40,8 +42,8 @@ public class Request {
     @ManyToMany
     @JoinTable(
             name = "request_tags",
-            joinColumns = { @JoinColumn(name = "request_id")},
-            inverseJoinColumns = { @JoinColumn(name = "tag_id")}
+            joinColumns = {@JoinColumn(name = "request_id")},
+            inverseJoinColumns = {@JoinColumn(name = "tag_id")}
     )
     Set<Tag> tags;
 }

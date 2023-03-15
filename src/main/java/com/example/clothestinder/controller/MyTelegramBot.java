@@ -13,16 +13,18 @@ import javax.annotation.PostConstruct;
 @Log4j
 @Component
 public class MyTelegramBot extends TelegramLongPollingBot {
-    @Value("${bot.name}") private String botName;
-    @Value("${bot.token}") private String token;
-    private UpdateController updateController;
+    @Value("${bot.name}")
+    private String botName;
+    @Value("${bot.token}")
+    private String token;
+    private final UpdateController updateController;
 
-    public MyTelegramBot(UpdateController updateController){
+    public MyTelegramBot(UpdateController updateController) {
         this.updateController = updateController;
     }
 
     @PostConstruct
-    public void init(){
+    public void init() {
         updateController.registerBot(this);
     }
 
@@ -41,11 +43,11 @@ public class MyTelegramBot extends TelegramLongPollingBot {
         updateController.processUpdate(update);
     }
 
-    public void sendMessage(SendMessage message){
-        if(message != null) {
+    public void sendMessage(SendMessage message) {
+        if (message != null) {
             try {
                 execute(message);
-            } catch (TelegramApiException e){
+            } catch (TelegramApiException e) {
                 log.error(e);
             }
         }
