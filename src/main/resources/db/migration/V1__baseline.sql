@@ -2,9 +2,9 @@ CREATE TYPE tonality AS ENUM ('Cminor', 'Dminor', 'Eminor');
 
 CREATE TABLE Usr (
                      id BIGSERIAL NOT NULL PRIMARY KEY,
-                     login VARCHAR(100) NOT NULL,
-                     password VARCHAR(50),
-                     telegram_id BIGINT UNIQUE NOT NULL
+                     login VARCHAR(100) UNIQUE NOT NULL,
+                     password VARCHAR(50) NOT NULL,
+                     telegram_id BIGINT UNIQUE
 );
 
 

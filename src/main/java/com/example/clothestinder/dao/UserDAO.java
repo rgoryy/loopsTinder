@@ -5,4 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserDAO extends JpaRepository<User, Long> {
     User getUserByTelegramId(Long telegramId);
+    User getUserByLogin(String login);
 }

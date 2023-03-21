@@ -10,7 +10,6 @@ import java.util.Optional;
 
 @Service
 public class TagService {
-    @Autowired
     private final TagDAO tagDAO;
 
     public TagService(TagDAO tagDAO) {

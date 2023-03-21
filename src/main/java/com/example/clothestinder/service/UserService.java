@@ -1,6 +1,7 @@
 package com.example.clothestinder.service;
 
 import com.example.clothestinder.dao.UserDAO;
+import com.example.clothestinder.dto.RegisterUserDTO;
 import com.example.clothestinder.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,21 +10,20 @@ import java.util.Optional;
 
 @Service
 public class UserService {
-    @Autowired
     private final UserDAO userDAO;
 
     public UserService(UserDAO userDAO) {
         this.userDAO = userDAO;
     }
 
-    public User addNewUser(long telegramId) {
-        User user = new User();
-        user.setTelegramId(telegramId);
-        user.setLogin(""); //TODO fix this
-        user.setPassword("");
-        userDAO.save(user);
-        return user;
+    public void addNewUser(RegisterUserDTO registerUserDTO) {
+        User newUser = User.builder()
+                .password(registerUserDTO.getPassword())
+                .login(registerUserDTO.getLogin())
+                .build();
+        userDAO.save(newUser);
     }
+
 
     public Optional<User> getUserByTelegramId(Long telegramId) {
         User user = userDAO.getUserByTelegramId(telegramId);

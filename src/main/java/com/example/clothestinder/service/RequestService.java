@@ -1,8 +1,9 @@
 package com.example.clothestinder.service;
 
 import com.example.clothestinder.dao.RequestDAO;
+import com.example.clothestinder.dao.UserDAO;
+import com.example.clothestinder.dto.AddRequestDTO;
 import com.example.clothestinder.entity.Request;
-import com.example.clothestinder.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,20 +11,21 @@ import static com.example.clothestinder.entity.enums.Tonality.*;
 
 @Service
 public class RequestService {
-    @Autowired
     private final RequestDAO requestDAO;
-
-    public RequestService(RequestDAO requestDAO) {
+    private final UserDAO userDAO;
+    public RequestService(RequestDAO requestDAO, UserDAO userDAO) {
         this.requestDAO = requestDAO;
+        this.userDAO = userDAO;
     }
 
-    public void addNewRequest(User user) {
-        Request request = Request.builder()
-                .userId(user.getId())
-                .bpmMin(100L)//todo изменить добавление
-                .bpmMax(200L)//todo изменить добавление
-                .tonality(EMINOR)//todo изменить добавление
+    public void addNewRequest(AddRequestDTO addRequestDTO) {
+        Request newRequest = Request.builder()
+                .userId(userDAO.getUserByLogin(addRequestDTO.getLogin()).getId())
+                .bpmMin(addRequestDTO.getBpmMin())
+                .bpmMax(addRequestDTO.getBpmMax())
+                .tonality(addRequestDTO.getTonality())
+                .tags(addRequestDTO.getTags())
                 .build();
-        requestDAO.save(request);
+        requestDAO.save(newRequest);
     }
 }

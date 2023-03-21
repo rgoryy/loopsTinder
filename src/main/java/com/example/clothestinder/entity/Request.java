@@ -2,17 +2,17 @@ package com.example.clothestinder.entity;
 
 
 import com.example.clothestinder.entity.enums.Tonality;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.Hibernate;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -46,4 +46,17 @@ public class Request {
             inverseJoinColumns = {@JoinColumn(name = "tag_id")}
     )
     Set<Tag> tags;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Request request = (Request) o;
+        return id != null && Objects.equals(id, request.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }
