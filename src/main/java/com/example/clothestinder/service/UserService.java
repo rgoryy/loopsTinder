@@ -16,13 +16,13 @@ public class UserService {
         this.userDAO = userDAO;
     }
 
-    public void addNewUser(long telegramId) {
+    public User addNewUser(long telegramId) {
         User user = new User();
         user.setTelegramId(telegramId);
         user.setLogin(""); //TODO fix this
         user.setPassword("");
         userDAO.save(user);
-
+        return user;
     }
 
     public Optional<User> getUserByTelegramId(Long telegramId) {

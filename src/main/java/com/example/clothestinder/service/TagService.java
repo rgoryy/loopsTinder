@@ -1,5 +1,6 @@
 package com.example.clothestinder.service;
 
+import com.example.clothestinder.TagAlreadyExistsException;
 import com.example.clothestinder.dao.TagDAO;
 import com.example.clothestinder.entity.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,9 @@ public class TagService {
     }
 
     public void addNewTag(String tagToAdd) {
+        Optional<Tag> optionalTag = getTagByName(tagToAdd);
+        if (!optionalTag.isEmpty())
+            throw new TagAlreadyExistsException();
         Tag tag = new Tag();
         tag.setTagItself(tagToAdd);
         tagDAO.save(tag);

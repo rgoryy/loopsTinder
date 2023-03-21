@@ -25,7 +25,7 @@ public class Loop {
     @Column(name = "file_path")
     private String filePath; //todo
     @Column(name = "tonality")
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
     private Tonality tonality; //todo
     @Column(name = "bpm")
     private Long bpm;

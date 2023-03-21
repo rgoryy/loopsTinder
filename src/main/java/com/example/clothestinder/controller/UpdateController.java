@@ -1,7 +1,7 @@
 package com.example.clothestinder.controller;
 
 
-import com.example.clothestinder.entity.Tag;
+import com.example.clothestinder.bot.MyTelegramBot;
 import com.example.clothestinder.entity.User;
 import com.example.clothestinder.service.RequestService;
 import com.example.clothestinder.service.TagService;
@@ -13,9 +13,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 
-import java.util.HashMap;
-import java.util.Optional;
-
 @Component
 @Log4j
 public class UpdateController {
@@ -24,55 +21,16 @@ public class UpdateController {
     private final RequestService requestService; //todo
     private MyTelegramBot myTelegramBot;
     private final MessageUtils messageUtils;
-    private HashMap<Long, Integer> stateMap;
 
     public UpdateController(UserService userService, TagService tagService, RequestService requestService, MessageUtils messageUtils) {
         this.userService = userService; //Todo
         this.tagService = tagService; //todo
         this.requestService = requestService; //todo
         this.messageUtils = messageUtils;
-        this.stateMap = new HashMap<>();
     }
 
     public void registerBot(MyTelegramBot telegramBot) {
         this.myTelegramBot = telegramBot;
-    }
-
-    public void processUpdate(Update update) {
-        var message = update.getMessage();
-        Long userId = message.getFrom().getId();
-        if (!stateMap.containsKey(userId)) {
-            stateMap.put(userId, 0);
-        }
-        Optional<User> user = userService.getUserByTelegramId(userId);
-        if (stateMap.get(userId) == 0) {
-            if (user.isEmpty()) {
-                userService.addNewUser(userId);
-                setView(messageUtils.generateSendMessageWithText(update,
-                        "send login"));
-                stateMap.replace(userId, 1);
-            } else {
-                setView(messageUtils.generateSendMessageWithText(update,
-                        "Hello, " + user.get().getLogin()));
-                if (message.getText().startsWith("#")) {
-                    processAddTag(update, message.getText());
-                } else if (message.getText().startsWith("request")) {
-                    processAddRequest(update, user.get());
-                }
-            }
-        } else if (stateMap.get(userId) == 1) {
-            String login = message.getText();
-            userService.setLogin(userId, login);
-            setView(messageUtils.generateSendMessageWithText(update,
-                    "send password"));
-            stateMap.replace(userId, 2);
-        } else if (stateMap.get(userId) == 2) {
-            String password = message.getText();
-            userService.setPassword(userId, password);
-            setView(messageUtils.generateSendMessageWithText(update,
-                    "successfully registered"));
-            stateMap.replace(userId, 0);
-        }
     }
 
     private void processAddRequest(Update update, User user) {
@@ -82,17 +40,8 @@ public class UpdateController {
     }
 
 
-    private void processAddTag(Update update, String message) {
-        Optional<Tag> tag = tagService.getTagByName(message);
-        if (tag.isEmpty()) {
-            String tagToAdd = update.getMessage().getText();
-            tagService.addNewTag(tagToAdd);
-            setView(messageUtils.generateSendMessageWithText(update,
-                    "added tag"));
-        } else {
-            setView(messageUtils.generateSendMessageWithText(update,
-                    "tag " + message + " already exists"));
-        }
+    public void processAddTag(String message) {
+        tagService.addNewTag(message);
     }
 
     public void distributeMessagesByType(Update update) {
