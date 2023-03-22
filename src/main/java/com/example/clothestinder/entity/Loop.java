@@ -25,14 +25,14 @@ public class Loop {
     @Column(name = "file_path")
     private String filePath; //todo
     @Column(name = "tonality")
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private Tonality tonality; //todo
     @Column(name = "bpm")
     private Long bpm;
 
     @ManyToOne
     @JoinColumn(name = "user_id", insertable = false, updatable = false)
-    private Loop loop;
+    private User user;
 
     @ManyToMany
     @JoinTable(
